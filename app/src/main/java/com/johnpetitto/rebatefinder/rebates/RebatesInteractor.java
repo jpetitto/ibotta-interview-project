@@ -1,19 +1,11 @@
 package com.johnpetitto.rebatefinder.rebates;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+import com.johnpetitto.rebatefinder.JsonParsingTransformer;
 import com.johnpetitto.rebatefinder.Offer;
 import com.johnpetitto.rebatefinder.OfferResponse;
 import com.johnpetitto.rebatefinder.Retailer;
-import com.johnpetitto.rebatefinder.Utils;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import rx.Observable;
-import rx.Single;
-import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Func1;
-import rx.schedulers.Schedulers;
 
 public class RebatesInteractor {
   private static Observable<Offer> offers;
@@ -45,30 +37,5 @@ public class RebatesInteractor {
         return false;
       }
     });
-  }
-
-  private static class JsonParsingTransformer<R> implements Single.Transformer<InputStream, R> {
-    Type responseType;
-
-    JsonParsingTransformer(Type responseType) {
-      this.responseType = responseType;
-    }
-
-    @Override public Single<R> call(Single<InputStream> inputStreamSingle) {
-      return inputStreamSingle.subscribeOn(AndroidSchedulers.mainThread())
-          .observeOn(Schedulers.io())
-          .map(new Func1<InputStream, JsonReader>() {
-            @Override public JsonReader call(InputStream stream) {
-              return new JsonReader(new InputStreamReader(stream));
-            }
-          })
-          .map(new Func1<JsonReader, R>() {
-            @Override public R call(JsonReader jsonReader) {
-              R response = new Gson().fromJson(jsonReader, responseType);
-              Utils.closeResourceQuietly(jsonReader);
-              return response;
-            }
-          });
-    }
   }
 }
