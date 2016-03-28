@@ -1,0 +1,5 @@
+<resources>
+  <string name="app_name">Rebate Finder</string>
+  <string name="retailer_content_desc">Retailer Logo</string>
+  <string name="rebate_content_desc">Rebate Image</string>
+</resources>
